@@ -1,4 +1,4 @@
-package org.novelfs.logging
+package org.novelfs.pure.log
 
 import cats.Monad
 

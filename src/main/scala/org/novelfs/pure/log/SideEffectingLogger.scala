@@ -1,4 +1,4 @@
-package org.novelfs.logging
+package org.novelfs.pure.log
 
 import org.log4s.{Logger => Log4sLogger}
 

@@ -5,8 +5,8 @@
 Works on any monad with a `LiftIO` instance.
 
 ```
-import org.novelfs.logging.Logger
-import org.novelfs.logging.simple._
+import org.novelfs.pure.log.Logger
+import org.novelfs.pure.log.simple._
 
 Logger.log[IO](LogLevel.Info)("Hello World!").unsafeRunSync()
 ```
@@ -18,8 +18,8 @@ Works on any monad with a `LiftIO` instance and an `ApplicativeLocal` instance w
 A `ToMdc` instance is provided for `Map[String, String]` meaning that this works out of the box:
 
 ```
-import org.novelfs.logging.Logger
-import org.novelfs.logging.mdc._
+import org.novelfs.pure.log.Logger
+import org.novelfs.pure.log.mdc._
 
 Logger.log[ReaderT[IO, Map[String, String], ?]](LogLevel.Info)("Hello World!")
     .run( Map("firstName" -> "James", "lastName" -> "Kirk") )

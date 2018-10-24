@@ -1,4 +1,4 @@
-package org.novelfs.logging
+package org.novelfs.pure.log
 
 import cats.data.ReaderT
 import cats.mtl.implicits._
@@ -11,6 +11,7 @@ class Test extends FlatSpec with Matchers {
     import simple._
 
     Logger.log[IO](LogLevel.Info)("Hello World!").unsafeRunSync()
+
   }
 
   "mdc logging" should "successfully compile when mdc._ is imported and a simple Map[String, String] context is used" in {

@@ -1,4 +1,4 @@
-package org.novelfs.logging.mdc
+package org.novelfs.pure.log.mdc
 
 trait ToMdc[T] {
   def toMdc(item :T) : Map[String, String]

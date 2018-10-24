@@ -8,7 +8,6 @@ val catsEffectVersion = "1.0.0"
 val kafkaSerializationV = "0.3.2"
 val scalatestVersion = "3.0.4"
 val typesafeConfigVersion = "1.3.1"
-val fs2Version = "1.0.0"
 
 libraryDependencies ++= Seq(
   "ch.qos.logback"  % "logback-classic"               % "1.2.3"
