@@ -1,7 +1,7 @@
 package org.novelfs.pure.log
 
 import cats.Monad
-import cats.effect.{LiftIO}
+import cats.effect.LiftIO
 import cats.mtl.ApplicativeAsk
 
 package object mdc {

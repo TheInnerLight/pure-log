@@ -5,8 +5,7 @@ import cats.Monad
 import cats.effect.{IO, LiftIO}
 import cats.mtl.ApplicativeAsk
 import org.log4s.{MDC, getLogger}
-import org.novelfs.logging.{MonadLogger, SideEffectingLogger}
-import org.novelfs.pure.log.{LogLevel, MonadLogger}
+import org.novelfs.pure.log.{LogLevel, MonadLogger, SideEffectingLogger}
 
 private[this] class MdcLogger[F[_] : LiftIO : Monad, TContext](implicit toMdc : ToMdc[TContext], applicativeLocal : ApplicativeAsk[F, TContext]) extends MonadLogger[F] {
   private val logger = getLogger

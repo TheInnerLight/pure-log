@@ -2,7 +2,7 @@ package org.novelfs.pure.log
 
 import org.log4s.{Logger => Log4sLogger}
 
-private [this] object SideEffectingLogger {
+private [log] object SideEffectingLogger {
   def logWithLogger(logger : Log4sLogger)(logLevel: LogLevel)(msg : String): Unit = {
     logLevel match {
       case LogLevel.Trace => logger.trace(msg)
