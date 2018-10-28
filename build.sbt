@@ -1,6 +1,6 @@
 import ReleaseTransformations._
 
-name := "logging"
+name := "pure-log"
 scalaVersion := "2.12.7"
 organization := "org.novelfs"
 
