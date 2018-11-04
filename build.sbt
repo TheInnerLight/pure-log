@@ -11,7 +11,8 @@ val typesafeConfigVersion = "1.3.1"
 
 libraryDependencies ++= Seq(
   "ch.qos.logback"  % "logback-classic"               % "1.2.3"
-  ,  "com.typesafe" % "config" % typesafeConfigVersion
+  , "com.github.mpilquist" %% "simulacrum" % "0.14.0"
+  , "com.typesafe" % "config" % typesafeConfigVersion
   , "org.log4s" %% "log4s" % "1.6.1"
   , "org.scalactic" %% "scalactic" % scalatestVersion
   , "org.scalatest" %% "scalatest" % scalatestVersion % Test
@@ -23,6 +24,7 @@ libraryDependencies ++= Seq(
 )
 
 addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.4")
+addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
 
 scalacOptions ++= Seq(
   "-deprecation",                      // Emit warning and location for usages of deprecated APIs.

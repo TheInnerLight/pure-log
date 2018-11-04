@@ -4,13 +4,11 @@ import cats.implicits._
 import cats.Monad
 import cats.effect.{IO, LiftIO}
 import cats.mtl.ApplicativeAsk
-import org.log4s.{MDC, getLogger}
+import org.log4s.{Logger, MDC}
 import org.novelfs.pure.log.{LogLevel, MonadLogger, SideEffectingLogger}
 
-private[this] class MdcLogger[F[_] : LiftIO : Monad, TContext](implicit toMdc : ToMdc[TContext], applicativeLocal : ApplicativeAsk[F, TContext]) extends MonadLogger[F] {
-  private val logger = getLogger
-
-  override val monad: Monad[F] = Monad[F]
+private[this] class MdcLogger[F[_] : LiftIO : Monad, TContext](logger : Logger)(implicit toMdc : ToMdc[TContext], applicativeLocal : ApplicativeAsk[F, TContext]) extends MonadLogger[F] {
+  override def monad: Monad[F] = Monad[F]
 
   override def log(logLevel: LogLevel)(msg: String): F[Unit] =
     for {
