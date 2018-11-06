@@ -80,12 +80,12 @@ publishMavenStyle := true
 
 licenses := Seq("Apache-2.0" -> url("https://opensource.org/licenses/Apache-2.0"))
 
-homepage := Some(url("https://github.com/TheInnerLight/streaming-kafka"))
+homepage := Some(url("https://github.com/TheInnerLight/pure-log"))
 
 scmInfo := Some(
   ScmInfo(
-    url("https://github.com/TheInnerLight/streaming-kafka"),
-    "scm:git@github.com:TheInnerLight/streaming-kafka.git"
+    url("https://github.com/TheInnerLight/pure-log"),
+    "scm:git@github.com:TheInnerLight/pure-log.git"
   )
 )
 
