@@ -1,5 +1,8 @@
 # pure-log
 
+
+[![Build Status](https://travis-ci.org/TheInnerLight/streaming-kafka.svg?branch=master)](https://travis-ci.org/TheInnerLight/pure-log)
+[![Latest version](https://index.scala-lang.org/theinnerlight/pure-log/pure-log/latest.svg?color=orange)](https://index.scala-lang.org/theinnerlight/pure-log/pure-log)
 ## Simple logging in IO
 
 Works on any monad with a `LiftIO` instance.
