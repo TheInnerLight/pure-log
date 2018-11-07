@@ -5,7 +5,9 @@
 [![Latest version](https://index.scala-lang.org/theinnerlight/pure-log/pure-log/latest.svg?color=orange)](https://index.scala-lang.org/theinnerlight/pure-log/pure-log)
 ## Simple logging in IO
 
-Works on any monad with a `LiftIO` instance.
+libraryDependencies += "org.novelfs" %% "pure-log" % "[Latest version]"
+
+Works in any monad with a `LiftIO` instance.
 
 ```
 import org.novelfs.pure.log.Logger
@@ -16,7 +18,7 @@ Logger.log[IO](LogLevel.Info)("Hello World!").unsafeRunSync()
 
 ## MDC Logging
 
-Works on any monad with a `LiftIO` instance and an `ApplicativeLocal` instance where the environment that you intend to read from has a `ToMdc` instance.
+Works in any monad with a `LiftIO` instance and an `ApplicativeLocal` instance where the environment that you intend to read from has a `ToMdc` instance.
 
 ```
 import org.novelfs.pure.log.Logger
