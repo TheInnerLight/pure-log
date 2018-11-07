@@ -5,7 +5,9 @@
 [![Latest version](https://index.scala-lang.org/theinnerlight/pure-log/pure-log/latest.svg?color=orange)](https://index.scala-lang.org/theinnerlight/pure-log/pure-log)
 ## Simple logging in IO
 
+```
 libraryDependencies += "org.novelfs" %% "pure-log" % "[Latest version]"
+```
 
 Works in any monad with a `LiftIO` instance.
 
