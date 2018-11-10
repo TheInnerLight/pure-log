@@ -1,10 +1,10 @@
 package org.novelfs.pure.log
 
-import cats.Monad
+import cats.Applicative
 import simulacrum.typeclass
 
 @typeclass
-trait MonadLogger[F[_]] {
-  def monad : Monad[F]
+trait ApplicativeLogger[F[_]] {
+  def applicative : Applicative[F]
   def log(logLevel: LogLevel)(msg : String) : F[Unit]
 }

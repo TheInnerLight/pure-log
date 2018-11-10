@@ -1,14 +1,14 @@
 package org.novelfs.pure.log.mdc
 
 import cats.implicits._
-import cats.Monad
+import cats.{Applicative, Monad}
 import cats.effect.{IO, LiftIO}
 import cats.mtl.ApplicativeAsk
 import org.log4s.{Logger, MDC}
-import org.novelfs.pure.log.{LogLevel, MonadLogger, SideEffectingLogger}
+import org.novelfs.pure.log.{ApplicativeLogger, LogLevel, SideEffectingLogger}
 
-private[this] class MdcLogger[F[_] : LiftIO : Monad, TContext](logger : Logger)(implicit toMdc : ToMdc[TContext], applicativeLocal : ApplicativeAsk[F, TContext]) extends MonadLogger[F] {
-  override def monad: Monad[F] = Monad[F]
+private[this] class MdcLogger[F[_] : LiftIO : Monad, TContext](logger : Logger)(implicit toMdc : ToMdc[TContext], applicativeLocal : ApplicativeAsk[F, TContext]) extends ApplicativeLogger[F] {
+  override def applicative: Applicative[F] = Applicative[F]
 
   override def log(logLevel: LogLevel)(msg: String): F[Unit] =
     for {

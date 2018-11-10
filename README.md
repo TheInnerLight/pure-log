@@ -9,7 +9,7 @@
 libraryDependencies += "org.novelfs" %% "pure-log" % "[Latest version]"
 ```
 
-Works in any monad with a `LiftIO` instance.
+Works in any `Applicative` with a `LiftIO` instance.
 
 ```
 import org.novelfs.pure.log.Logger
@@ -20,7 +20,7 @@ Logger.log[IO](LogLevel.Info)("Hello World!").unsafeRunSync()
 
 ## MDC Logging
 
-Works in any monad with a `LiftIO` instance and an `ApplicativeLocal` instance where the environment that you intend to read from has a `ToMdc` instance.
+Works in any `Monad` with a `LiftIO` instance and an `ApplicativeLocal` instance where the environment that you intend to read from has a `ToMdc` instance.
 
 ```
 import org.novelfs.pure.log.Logger
