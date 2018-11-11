@@ -198,7 +198,6 @@ class MdcLoggingSpec extends FlatSpec with Matchers with GeneratorDrivenProperty
 
   "mdc logging at log level error" should "call the underlying logger error method with the correct message and get the MDC" in new MdcLoggingSpecContext {
     forAll { (expectedLogMessage: String, expectedMdc : Map[String, String]) =>
-      val expectedMdc = Map("a" -> "1")
       ApplicativeLogger[ReaderT[IO, Map[String, String], ?]].log(LogLevel.Error)(expectedLogMessage).run(expectedMdc).unsafeRunSync()
       val (actualLogMessage, actualMdc) = errorLogCalls.take.unsafeRunSync()
       actualMdc shouldBe expectedMdc
