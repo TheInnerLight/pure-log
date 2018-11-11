@@ -14,6 +14,7 @@ Works in any `Applicative` with a `LiftIO` instance.
 ```
 import org.novelfs.pure.log.Logger
 import org.novelfs.pure.log.simple._
+import cats.effect.IO
 
 Logger.log[IO](LogLevel.Info)("Hello World!").unsafeRunSync()
 ```
@@ -25,13 +26,16 @@ Works in any `Monad` with a `LiftIO` instance and an `ApplicativeLocal` instance
 ```
 import org.novelfs.pure.log.Logger
 import org.novelfs.pure.log.mdc._
+import cats.data.ReaderT
+import cats.mtl.implicits._
 
-implicit val stringMapToMdc = new ToMdc[Map[String, String]] {
-  override def toMdc(item: Map[String, String]): Map[String, String] = item
+case class Captain(firstName : String, lastName : String)
+
+implicit val captainToMdc = new ToMdc[Captain] {
+  override def toMdc(captain: Captain): Map[String, String] = Map("firstName" -> captain.firstName, "lastName" -> captain.lastName)
 }
 
-Logger.log[ReaderT[IO, Map[String, String], ?]](LogLevel.Info)("Hello World!")
-    .run( Map("firstName" -> "James", "lastName" -> "Kirk") )
-    .unsafeRunSync()
-
+Logger.log[ReaderT[IO, Captain, ?]](LogLevel.Info)("Hello World!")
+  .run(Captain("James", "Kirk"))
+  .unsafeRunSync()
 ```
