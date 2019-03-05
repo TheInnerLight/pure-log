@@ -12,4 +12,8 @@ private [log] object SideEffectingLogger {
       case LogLevel.Error => logger.error(msg)
     }
   }
+
+  def logErrorWithLogger(logger : Log4sLogger)(e: Throwable)(msg : String): Unit = {
+    logger.error(e)(msg)
+  }
 }
