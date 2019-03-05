@@ -11,17 +11,25 @@ private[this] class MdcLogger[F[_] : LiftIO : Monad, TContext](logger : Logger)(
   override def applicative: Applicative[F] = Applicative[F]
 
   override def log(logLevel: LogLevel)(msg: String): F[Unit] =
-    logEffect(IO { SideEffectingLogger.logWithLogger(logger)(logLevel)(msg) })
-
-  override def error(e: Throwable)(msg: String): F[Unit] =
-    logEffect(IO { SideEffectingLogger.logErrorWithLogger(logger)(e)(msg) })
-
-  private def logEffect[A](f: IO[A]): F[A] =
     for {
       context <- applicativeLocal.ask
       mdcMap = toMdc.toMdc(context)
       result <- LiftIO[F].liftIO(IO {
-        MDC.withCtx(mdcMap.toSeq : _*)(f)
+        MDC.withCtx(mdcMap.toSeq : _*) {
+          SideEffectingLogger.logWithLogger(logger)(logLevel)(msg)
+        }
       })
     } yield result
+
+  override def logThrowable(logLevel: LogLevel)(e: Throwable)(msg: String): F[Unit] =
+    for {
+      context <- applicativeLocal.ask
+      mdcMap = toMdc.toMdc(context)
+      result <- LiftIO[F].liftIO(IO {
+        MDC.withCtx(mdcMap.toSeq : _*) {
+          SideEffectingLogger.logThrowableWithLogger(logger)(logLevel)(e)(msg)
+        }
+      })
+    } yield result
+
 }

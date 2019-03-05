@@ -11,6 +11,6 @@ private [this] class SimpleLogger[F[_] : LiftIO : Applicative](logger : Logger) 
   override def log(logLevel: LogLevel)(msg: String): F[Unit] =
     LiftIO[F].liftIO(IO { SideEffectingLogger.logWithLogger(logger)(logLevel)(msg) })
 
-  override def error(e: Throwable)(msg: String): F[Unit] =
-    LiftIO[F].liftIO(IO { SideEffectingLogger.logErrorWithLogger(logger)(e)(msg) })
+  override def logThrowable(logLevel: LogLevel)(e: Throwable)(msg: String): F[Unit] =
+    LiftIO[F].liftIO(IO { SideEffectingLogger.logThrowableWithLogger(logger)(logLevel)(e)(msg) })
 }
