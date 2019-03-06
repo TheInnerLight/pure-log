@@ -23,6 +23,12 @@ class MdcLoggingSpec extends FlatSpec with Matchers with GeneratorDrivenProperty
     val warnLogCalls = MVar.empty[IO, (String, Map[String, String])].unsafeRunSync()
     val errorLogCalls = MVar.empty[IO, (String, Map[String, String])].unsafeRunSync()
 
+    val traceThrowableLogCalls = MVar.empty[IO, (String, Throwable, Map[String, String])].unsafeRunSync()
+    val debugThrowableLogCalls = MVar.empty[IO, (String, Throwable, Map[String, String])].unsafeRunSync()
+    val infoThrowableLogCalls = MVar.empty[IO, (String, Throwable, Map[String, String])].unsafeRunSync()
+    val warnThrowableLogCalls = MVar.empty[IO, (String, Throwable, Map[String, String])].unsafeRunSync()
+    val errorThrowableLogCalls = MVar.empty[IO, (String, Throwable, Map[String, String])].unsafeRunSync()
+
     // look at the interface segregation principle in action! ;)
     val mockSlf4jLogger = new Slf4jLogger {
 
@@ -36,7 +42,7 @@ class MdcLoggingSpec extends FlatSpec with Matchers with GeneratorDrivenProperty
 
       override def debug(format: String, arguments: AnyRef*): Unit = ???
 
-      override def debug(msg: String, t: Throwable): Unit = debugLogCalls.put((msg, MDC.toMap[String, String])).unsafeRunSync()
+      override def debug(msg: String, t: Throwable): Unit = debugThrowableLogCalls.put((msg, t, MDC.toMap[String, String])).unsafeRunSync()
 
       override def debug(marker: Marker, msg: String): Unit = ???
 
@@ -60,7 +66,7 @@ class MdcLoggingSpec extends FlatSpec with Matchers with GeneratorDrivenProperty
 
       override def error(format: String, arguments: AnyRef*): Unit = ???
 
-      override def error(msg: String, t: Throwable): Unit = errorLogCalls.put((msg, MDC.toMap[String, String])).unsafeRunSync()
+      override def error(msg: String, t: Throwable): Unit = errorThrowableLogCalls.put((msg, t, MDC.toMap[String, String])).unsafeRunSync()
 
       override def error(marker: Marker, msg: String): Unit = ???
 
@@ -80,7 +86,7 @@ class MdcLoggingSpec extends FlatSpec with Matchers with GeneratorDrivenProperty
 
       override def warn(format: String, arg1: scala.Any, arg2: scala.Any): Unit = ???
 
-      override def warn(msg: String, t: Throwable): Unit = warnLogCalls.put((msg, MDC.toMap[String, String])).unsafeRunSync()
+      override def warn(msg: String, t: Throwable): Unit = warnThrowableLogCalls.put((msg, t, MDC.toMap[String, String])).unsafeRunSync()
 
       override def warn(marker: Marker, msg: String): Unit = ???
 
@@ -100,7 +106,7 @@ class MdcLoggingSpec extends FlatSpec with Matchers with GeneratorDrivenProperty
 
       override def trace(format: String, arguments: AnyRef*): Unit = ???
 
-      override def trace(msg: String, t: Throwable): Unit = traceLogCalls.put((msg, MDC.toMap[String, String])).unsafeRunSync()
+      override def trace(msg: String, t: Throwable): Unit = traceThrowableLogCalls.put((msg, t, MDC.toMap[String, String])).unsafeRunSync()
 
       override def trace(marker: Marker, msg: String): Unit = ???
 
@@ -136,7 +142,7 @@ class MdcLoggingSpec extends FlatSpec with Matchers with GeneratorDrivenProperty
 
       override def info(format: String, arguments: AnyRef*): Unit = ???
 
-      override def info(msg: String, t: Throwable): Unit = infoLogCalls.put((msg, MDC.toMap[String, String])).unsafeRunSync()
+      override def info(msg: String, t: Throwable): Unit = infoThrowableLogCalls.put((msg, t, MDC.toMap[String, String])).unsafeRunSync()
 
       override def info(marker: Marker, msg: String): Unit = ???
 
@@ -202,6 +208,56 @@ class MdcLoggingSpec extends FlatSpec with Matchers with GeneratorDrivenProperty
       val (actualLogMessage, actualMdc) = errorLogCalls.take.unsafeRunSync()
       actualMdc shouldBe expectedMdc
       actualLogMessage shouldBe expectedLogMessage
+    }
+  }
+
+  "throwable mdc logging at log level trace" should "call the underlying logger trace method with the correct message and get the MDC" in new MdcLoggingSpecContext {
+    forAll { (expectedLogMessage: String, expectedMdc : Map[String, String], e: Throwable) =>
+      ApplicativeLogger[ReaderT[IO, Map[String, String], ?]].logThrowable(LogLevel.Trace)(e)(expectedLogMessage).run(expectedMdc).unsafeRunSync()
+      val (actualLogMessage, throwable, actualMdc) = traceThrowableLogCalls.take.unsafeRunSync()
+      actualMdc shouldBe expectedMdc
+      actualLogMessage shouldBe expectedLogMessage
+      throwable shouldBe e
+    }
+  }
+
+  "throwable mdc logging at log level debug" should "call the underlying logger trace method with the correct message and get the MDC" in new MdcLoggingSpecContext {
+    forAll { (expectedLogMessage: String, expectedMdc : Map[String, String], e: Throwable) =>
+      ApplicativeLogger[ReaderT[IO, Map[String, String], ?]].logThrowable(LogLevel.Debug)(e)(expectedLogMessage).run(expectedMdc).unsafeRunSync()
+      val (actualLogMessage, throwable, actualMdc) = debugThrowableLogCalls.take.unsafeRunSync()
+      actualMdc shouldBe expectedMdc
+      actualLogMessage shouldBe expectedLogMessage
+      throwable shouldBe e
+    }
+  }
+
+  "throwable mdc logging at log level info" should "call the underlying logger trace method with the correct message and get the MDC" in new MdcLoggingSpecContext {
+    forAll { (expectedLogMessage: String, expectedMdc: Map[String, String], e: Throwable) =>
+      ApplicativeLogger[ReaderT[IO, Map[String, String], ?]].logThrowable(LogLevel.Info)(e)(expectedLogMessage).run(expectedMdc).unsafeRunSync()
+      val (actualLogMessage, throwable, actualMdc) = infoThrowableLogCalls.take.unsafeRunSync()
+      actualMdc shouldBe expectedMdc
+      actualLogMessage shouldBe expectedLogMessage
+      throwable shouldBe e
+    }
+  }
+
+  "throwable mdc logging at log level warn" should "call the underlying logger trace method with the correct message and get the MDC" in new MdcLoggingSpecContext {
+    forAll { (expectedLogMessage: String, expectedMdc: Map[String, String], e: Throwable) =>
+      ApplicativeLogger[ReaderT[IO, Map[String, String], ?]].logThrowable(LogLevel.Warn)(e)(expectedLogMessage).run(expectedMdc).unsafeRunSync()
+      val (actualLogMessage, throwable, actualMdc) = warnThrowableLogCalls.take.unsafeRunSync()
+      actualMdc shouldBe expectedMdc
+      actualLogMessage shouldBe expectedLogMessage
+      throwable shouldBe e
+    }
+  }
+
+  "throwable mdc logging at log level error" should "call the underlying logger trace method with the correct message and get the MDC" in new MdcLoggingSpecContext {
+    forAll { (expectedLogMessage: String, expectedMdc: Map[String, String], e: Throwable) =>
+      ApplicativeLogger[ReaderT[IO, Map[String, String], ?]].logThrowable(LogLevel.Error)(e)(expectedLogMessage).run(expectedMdc).unsafeRunSync()
+      val (actualLogMessage, throwable, actualMdc) = errorThrowableLogCalls.take.unsafeRunSync()
+      actualMdc shouldBe expectedMdc
+      actualLogMessage shouldBe expectedLogMessage
+      throwable shouldBe e
     }
   }
 }

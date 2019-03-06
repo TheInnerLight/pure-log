@@ -20,4 +20,16 @@ private[this] class MdcLogger[F[_] : LiftIO : Monad, TContext](logger : Logger)(
         }
       })
     } yield result
+
+  override def logThrowable(logLevel: LogLevel)(e: Throwable)(msg: String): F[Unit] =
+    for {
+      context <- applicativeLocal.ask
+      mdcMap = toMdc.toMdc(context)
+      result <- LiftIO[F].liftIO(IO {
+        MDC.withCtx(mdcMap.toSeq : _*) {
+          SideEffectingLogger.logThrowableWithLogger(logger)(logLevel)(e)(msg)
+        }
+      })
+    } yield result
+
 }

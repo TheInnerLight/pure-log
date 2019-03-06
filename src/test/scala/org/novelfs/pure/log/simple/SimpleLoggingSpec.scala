@@ -21,6 +21,12 @@ class SimpleLoggingSpec extends FlatSpec with Matchers with GeneratorDrivenPrope
     val warnLogCalls = MVar.empty[IO, String].unsafeRunSync()
     val errorLogCalls = MVar.empty[IO, String].unsafeRunSync()
 
+    val traceThrowableLogCalls = MVar.empty[IO, (String, Throwable)].unsafeRunSync()
+    val debugThrowableLogCalls = MVar.empty[IO, (String, Throwable)].unsafeRunSync()
+    val infoThrowableLogCalls = MVar.empty[IO, (String, Throwable)].unsafeRunSync()
+    val warnThrowableLogCalls = MVar.empty[IO, (String, Throwable)].unsafeRunSync()
+    val errorThrowableLogCalls = MVar.empty[IO, (String, Throwable)].unsafeRunSync()
+
     // look at the interface segregation principle in action! ;)
     val mockSlf4jLogger = new Slf4jLogger {
 
@@ -34,7 +40,7 @@ class SimpleLoggingSpec extends FlatSpec with Matchers with GeneratorDrivenPrope
 
       override def debug(format: String, arguments: AnyRef*): Unit = ???
 
-      override def debug(msg: String, t: Throwable): Unit = debugLogCalls.put(msg).unsafeRunSync()
+      override def debug(msg: String, t: Throwable): Unit = debugThrowableLogCalls.put((msg, t)).unsafeRunSync()
 
       override def debug(marker: Marker, msg: String): Unit = ???
 
@@ -58,7 +64,7 @@ class SimpleLoggingSpec extends FlatSpec with Matchers with GeneratorDrivenPrope
 
       override def error(format: String, arguments: AnyRef*): Unit = ???
 
-      override def error(msg: String, t: Throwable): Unit = errorLogCalls.put(msg).unsafeRunSync()
+      override def error(msg: String, t: Throwable): Unit = errorThrowableLogCalls.put((msg, t)).unsafeRunSync()
 
       override def error(marker: Marker, msg: String): Unit = ???
 
@@ -78,7 +84,7 @@ class SimpleLoggingSpec extends FlatSpec with Matchers with GeneratorDrivenPrope
 
       override def warn(format: String, arg1: scala.Any, arg2: scala.Any): Unit = ???
 
-      override def warn(msg: String, t: Throwable): Unit = warnLogCalls.put(msg).unsafeRunSync()
+      override def warn(msg: String, t: Throwable): Unit = warnThrowableLogCalls.put((msg, t)).unsafeRunSync()
 
       override def warn(marker: Marker, msg: String): Unit = ???
 
@@ -98,7 +104,7 @@ class SimpleLoggingSpec extends FlatSpec with Matchers with GeneratorDrivenPrope
 
       override def trace(format: String, arguments: AnyRef*): Unit = ???
 
-      override def trace(msg: String, t: Throwable): Unit = traceLogCalls.put(msg).unsafeRunSync()
+      override def trace(msg: String, t: Throwable): Unit = traceThrowableLogCalls.put((msg, t)).unsafeRunSync()
 
       override def trace(marker: Marker, msg: String): Unit = ???
 
@@ -134,7 +140,7 @@ class SimpleLoggingSpec extends FlatSpec with Matchers with GeneratorDrivenPrope
 
       override def info(format: String, arguments: AnyRef*): Unit = ???
 
-      override def info(msg: String, t: Throwable): Unit = infoLogCalls.put(msg).unsafeRunSync()
+      override def info(msg: String, t: Throwable): Unit = infoThrowableLogCalls.put((msg, t)).unsafeRunSync()
 
       override def info(marker: Marker, msg: String): Unit = ???
 
@@ -193,4 +199,48 @@ class SimpleLoggingSpec extends FlatSpec with Matchers with GeneratorDrivenPrope
     }
   }
 
+  "throwable simple logging at log level trace" should "call the underlying logger trace method with the correct message" in new SimpleLoggingSpecContext {
+    forAll { (expectedLogMessage: String, throwable: Throwable) =>
+      ApplicativeLogger[IO].logThrowable(LogLevel.Trace)(throwable)(expectedLogMessage).unsafeRunSync()
+      val (actualLogMessage, e) = traceThrowableLogCalls.take.unsafeRunSync()
+      actualLogMessage shouldBe expectedLogMessage
+      throwable shouldBe e
+    }
+  }
+
+  "throwable simple logging at log level debug" should "call the underlying logger trace method with the correct message" in new SimpleLoggingSpecContext {
+    forAll { (expectedLogMessage: String, throwable: Throwable) =>
+      ApplicativeLogger[IO].logThrowable(LogLevel.Debug)(throwable)(expectedLogMessage).unsafeRunSync()
+      val (actualLogMessage, e) = debugThrowableLogCalls.take.unsafeRunSync()
+      actualLogMessage shouldBe expectedLogMessage
+      throwable shouldBe e
+    }
+  }
+
+  "throwable simple logging at log level info" should "call the underlying logger trace method with the correct message" in new SimpleLoggingSpecContext {
+    forAll { (expectedLogMessage: String, throwable: Throwable) =>
+      ApplicativeLogger[IO].logThrowable(LogLevel.Info)(throwable)(expectedLogMessage).unsafeRunSync()
+      val (actualLogMessage, e) = infoThrowableLogCalls.take.unsafeRunSync()
+      actualLogMessage shouldBe expectedLogMessage
+      throwable shouldBe e
+    }
+  }
+
+  "throwable simple logging at log level warn" should "call the underlying logger trace method with the correct message" in new SimpleLoggingSpecContext {
+    forAll { (expectedLogMessage: String, throwable: Throwable) =>
+      ApplicativeLogger[IO].logThrowable(LogLevel.Warn)(throwable)(expectedLogMessage).unsafeRunSync()
+      val (actualLogMessage, e) = warnThrowableLogCalls.take.unsafeRunSync()
+      actualLogMessage shouldBe expectedLogMessage
+      throwable shouldBe e
+    }
+  }
+
+  "throwable simple logging at log level error" should "call the underlying logger trace method with the correct message" in new SimpleLoggingSpecContext {
+    forAll { (expectedLogMessage: String, throwable: Throwable) =>
+      ApplicativeLogger[IO].logThrowable(LogLevel.Error)(throwable)(expectedLogMessage).unsafeRunSync()
+      val (actualLogMessage, e) = errorThrowableLogCalls.take.unsafeRunSync()
+      actualLogMessage shouldBe expectedLogMessage
+      throwable shouldBe e
+    }
+  }
 }
